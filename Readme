@@ -19,29 +19,26 @@ Networking	Connects containers internally or externally.
 Docker Compose	Tool to manage multi-container applications with a single config file.
 
 🧱 Docker Image vs AMI
-Feature	AMI (AWS)	Docker Image
-Purpose	Boot virtual machines (EC2)	Run containers
-Contains	OS + App + Config + Runtime	OS base + App + Runtime + Libs
-Output	EC2 Instance (Server)	Docker Container
+|Feature	|AMI (AWS)	|Docker Image|
+|---------|-----------------------------|-------------------------------|
+|Purpose	|Boot virtual machines (EC2)	|Run containers|
+|Contains	|OS + App + Config + Runtime	|OS base + App + Runtime + Libs|
+|Output	|EC2 Instance (Server)	|Docker Container|
 
 🔧 Basic Docker Commands
 🖥️ View Images and Containers
-bash
-Copy
-Edit
+ 
 docker images               # List downloaded images
 docker ps                   # Running containers
 docker ps -a                # All containers (any state)
 🧊 Manage Containers
-bash
-Copy
-Edit
+ 
 docker pull nginx           # Download image from Docker Hub
 docker create nginx         # Create container but don’t start
 docker start <ID>           # Start existing container
 docker run nginx            # Pull (if needed) + Create + Start
 docker run -d nginx         # Run in detached mode (in background)
-docker exec -it nginx bash  # Access shell inside container
+docker exec -it nginx       # Access shell inside container
 docker rm <ID>              # Remove container
 docker rmi <image>          # Remove image
 🌍 Docker Networking
@@ -59,9 +56,7 @@ Host
 Container uses the host’s network stack directly.
 
 Create Custom Network
-bash
-Copy
-Edit
+  
 docker network create roboshop
 docker run -d --name redis --network roboshop redis:7
 Default bridge does not allow container-to-container communication by name. Use custom bridge network for microservices.
@@ -73,22 +68,15 @@ Containers are ephemeral – meaning, when deleted, data is lost. Volumes help p
 Types of Volumes:
 Named/Managed (Docker manages):
 
-bash
-Copy
-Edit
 docker volume create myvol
 docker run -v myvol:/data ...
 Unmanaged (You manage):
 
-bash
-Copy
-Edit
 docker run -v /host/data:/container/data ...
 ⚙️ Dockerfile – Custom Image Creation
 Basic Dockerfile Example:
 Dockerfile
-Copy
-Edit
+  
 FROM node:18
 WORKDIR /app
 COPY . .
@@ -109,16 +97,11 @@ ONBUILD	Trigger commands in children images
 .dockerignore	Exclude files from being sent during build
 
 Build Image:
-bash
-Copy
-Edit
 docker build -t myapp:v1 .
 ⚡ Multi-Stage Builds
 Reduce image size by separating build and run stages:
 
 Dockerfile
-Copy
-Edit
 FROM node:18 as builder
 WORKDIR /app
 COPY . .
@@ -130,8 +113,6 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 Compose simplifies multi-container orchestration:
 
 yaml
-Copy
-Edit
 version: "3"
 services:
   mongodb:
@@ -148,9 +129,6 @@ volumes:
   mongo_data:
 Run:
 
-bash
-Copy
-Edit
 docker-compose up -d
 🏗️ Docker Best Practices
 ✅ Use minimal and official images (e.g. alpine)
