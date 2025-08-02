@@ -1,0 +1,189 @@
+🚀 Complete Docker Tutorial – From Beginner to Advanced
+📦 What is Docker?
+Docker is a containerization platform that allows developers to package applications and their dependencies into containers. This ensures that the application runs the same way, regardless of where it is deployed.
+
+🔍 Why Containers?
+Lightweight: Share OS kernel; faster and smaller than VMs.
+
+Portable: Runs on any system with Docker installed.
+
+Consistent: Eliminates “it works on my machine” issues.
+
+📘 Docker Key Concepts
+Concept	Description
+Image	Blueprint of a container. Contains app code, libraries, runtime, etc.
+Container	Running instance of an image. Ephemeral unless configured to persist.
+Dockerfile	Script with instructions to build a custom image.
+Volumes	Mechanism to persist data outside the container lifecycle.
+Networking	Connects containers internally or externally.
+Docker Compose	Tool to manage multi-container applications with a single config file.
+
+🧱 Docker Image vs AMI
+Feature	AMI (AWS)	Docker Image
+Purpose	Boot virtual machines (EC2)	Run containers
+Contains	OS + App + Config + Runtime	OS base + App + Runtime + Libs
+Output	EC2 Instance (Server)	Docker Container
+
+🔧 Basic Docker Commands
+🖥️ View Images and Containers
+bash
+Copy
+Edit
+docker images               # List downloaded images
+docker ps                   # Running containers
+docker ps -a                # All containers (any state)
+🧊 Manage Containers
+bash
+Copy
+Edit
+docker pull nginx           # Download image from Docker Hub
+docker create nginx         # Create container but don’t start
+docker start <ID>           # Start existing container
+docker run nginx            # Pull (if needed) + Create + Start
+docker run -d nginx         # Run in detached mode (in background)
+docker exec -it nginx bash  # Access shell inside container
+docker rm <ID>              # Remove container
+docker rmi <image>          # Remove image
+🌍 Docker Networking
+Types of Docker Networks:
+Bridge (default)
+
+Docker creates its own virtual network.
+
+Suitable for single-host setups.
+
+Containers can talk if on the same custom bridge.
+
+Host
+
+Container uses the host’s network stack directly.
+
+Create Custom Network
+bash
+Copy
+Edit
+docker network create roboshop
+docker run -d --name redis --network roboshop redis:7
+Default bridge does not allow container-to-container communication by name. Use custom bridge network for microservices.
+
+💾 Docker Volumes
+Why Use Volumes?
+Containers are ephemeral – meaning, when deleted, data is lost. Volumes help persist this data.
+
+Types of Volumes:
+Named/Managed (Docker manages):
+
+bash
+Copy
+Edit
+docker volume create myvol
+docker run -v myvol:/data ...
+Unmanaged (You manage):
+
+bash
+Copy
+Edit
+docker run -v /host/data:/container/data ...
+⚙️ Dockerfile – Custom Image Creation
+Basic Dockerfile Example:
+Dockerfile
+Copy
+Edit
+FROM node:18
+WORKDIR /app
+COPY . .
+RUN npm install
+CMD ["node", "server.js"]
+Key Instructions
+Instruction	Purpose
+FROM	Base image (e.g. ubuntu, node, nginx)
+RUN	Execute command during image build (install software)
+CMD	Default command at container start (can be overridden)
+ENTRYPOINT	Defines main command; harder to override
+COPY	Copy files from host to image
+ADD	Like COPY but supports tar extraction and URLs
+ENV	Set environment variables
+ARG	Build-time variables (not available at runtime)
+EXPOSE	Documents which ports the app will use
+ONBUILD	Trigger commands in children images
+.dockerignore	Exclude files from being sent during build
+
+Build Image:
+bash
+Copy
+Edit
+docker build -t myapp:v1 .
+⚡ Multi-Stage Builds
+Reduce image size by separating build and run stages:
+
+Dockerfile
+Copy
+Edit
+FROM node:18 as builder
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+📋 Docker Compose – Multi-Container Setup
+Compose simplifies multi-container orchestration:
+
+yaml
+Copy
+Edit
+version: "3"
+services:
+  mongodb:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+
+  catalogue:
+    image: joindevops/catalogue:v1
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo_data:
+Run:
+
+bash
+Copy
+Edit
+docker-compose up -d
+🏗️ Docker Best Practices
+✅ Use minimal and official images (e.g. alpine)
+
+✅ Use non-root users
+
+✅ Use .dockerignore
+
+✅ Prefer COPY over ADD (unless untarring or URL is needed)
+
+✅ Combine RUN instructions to reduce image layers
+
+✅ Use multi-stage builds
+
+✅ Implement HEALTHCHECK
+
+✅ Use Docker volumes for stateful data
+
+✅ Create custom networks for service-to-service communication
+
+✅ Limit container resources (--memory, --cpus)
+
+❗ Docker Limitations
+Limitation	Description
+No auto-scaling	Can't scale automatically based on load
+No built-in load balancing	Needs external tools
+No self-healing	Crashed containers won’t auto-recover
+Single host dependency	If host dies, so does everything
+Storage risk	Without volumes, data is lost
+Network isolation	Bridge networks don’t span hosts
+
+💡 Use Kubernetes to solve most of these issues with orchestration, scaling, and resilience.
+
+📚 Summary
+Docker provides an efficient and consistent way to develop and deploy applications in containers. With tools like Docker Compose and Dockerfile, and best practices like multi-stage builds, Docker becomes a powerful part of the DevOps toolchain.
+
