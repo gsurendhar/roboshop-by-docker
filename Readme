@@ -19,7 +19,7 @@ Networking	Connects containers internally or externally.
 Docker Compose	Tool to manage multi-container applications with a single config file.
 
 🧱 Docker Image vs AMI
-|Feature	|AMI (AWS)	                  |Docker Image                   |
+|Feature|AMI (AWS)|Docker Image|
 |---------|-----------------------------|-------------------------------|
 |Purpose|Boot virtual machines (EC2)|Run containers|
 |Contains|OS + App + Config + Runtime|OS base + App + Runtime + Libs|
