@@ -10,6 +10,9 @@ services:
   catalogue:
     image: gsurendhar/catalogue:v1
     container_name: catalogue
+    environment:
+      MONGO: "true" 
+      MONGO_URL: "mongodb://mongodb:27017/catalogue"
     depends_on:
     - mongodb
   redis:
@@ -18,12 +21,20 @@ services:
   user:
     image: gsurendhar/user:v1
     container_name: user
+    environment:
+      MONGO: "true" 
+      REDIS_URL: "redis://redis:6379"
+      MONGO_URL: "mongodb://mongodb:27017/users"
     depends_on:
     - mongodb
     - redis
   cart:
     image: gsurendhar/cart:v1
     container_name: cart
+    environment:
+      REDIS_HOST: "redis"
+      CATALOGUE_HOST: "catalogue"
+      CATALOGUE_PORT: "8080"
     depends_on:
     - catalogue
     - redis
@@ -33,15 +44,18 @@ services:
   shipping: 
     image: gsurendhar/shipping:v1
     container_name: shipping
+    environment:
+      CART_ENDPOINT: "cart:8080"
+      DB_HOST: "mysql"
     depends_on:
     - mysql
     - cart
   rabbitmq: 
-    image: rabbitmq:3
+    image: gsurendhar/rabbitmq:v1
     container_name: rabbitmq
     environment: 
-      RABBITMQ_DEFAULT_USER = roboshop
-      RABBITMQ_DEFAULT_PASS = roboshop123
+      RABBITMQ_DEFAULT_USER: roboshop
+      RABBITMQ_DEFAULT_PASS: roboshop123
   payment:
     image: gsurendhar/payment:v1
     container_name: payment
@@ -57,3 +71,14 @@ services:
     - rabbitmq
     - cart
     - user
+  frontend:
+    image: gsurendhar/frontend:v1
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+    - catalogue
+    - user
+    - cart
+    - shipping
+    - payment
